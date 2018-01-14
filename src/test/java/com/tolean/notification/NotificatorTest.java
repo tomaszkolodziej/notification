@@ -49,6 +49,7 @@ public class NotificatorTest {
         Notification notification = new Notificator().errorMessage("20180114005937", fieldRequired()).build();
         // then
         assertEquals("Pole wymagane", notification.getMessage());
+        assertEquals("error", notification.getType());
     }
 
     @Test

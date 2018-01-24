@@ -2,10 +2,9 @@ package com.tolean.notification;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
-import static com.tolean.notification.Notificator.fieldMaxLength;
-import static com.tolean.notification.Notificator.fieldRequired;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,33 +42,15 @@ public class NotificatorTest {
     }
 
     @Test
-    public void shouldCreateGlobalErrorMessageWithRequiredMessage() {
-        // when
-        Notification notification = new Notificator().errorMessage("20180114005937", fieldRequired()).build();
-        // then
-        assertEquals("Pole wymagane", notification.getMessage());
-        assertEquals("error", notification.getType());
-    }
-
-    @Test
-    public void shouldCreateGlobalErrorMessageWithMaxLengthMessage() {
-        // when
-        Notification notification = new Notificator().errorMessage("20180114005937", fieldMaxLength(9)).build();
-        // then
-        assertEquals("Maks. długość wynosi 9", notification.getMessage());
-    }
-
-    @Test
     public void shouldCreateGlobalErrorMessageWithData() {
         // when
         Notification notification = new Notificator()
                 .errorMessage("20180114000901", "errorMessage")
-                .append("test")
-                .append("1", "2", "3")
-                .append(new ArrayList())
+                .append("items", new HashSet<>(asList(1, 2, 3)))
                 .build();
         // then
-        assertEquals(notification.getDataList().size(), 4);
+        assertEquals(notification.getDataMap().size(), 1);
+        assertEquals(((Collection) notification.getDataMap().get("items")).size(), 3);
     }
 
     @Test
@@ -107,26 +88,30 @@ public class NotificatorTest {
         Notification notification = new Notificator()
                 .code("code")
                 .warnMessage("20180114010134", "warnMessage")
-                .append("data1").append("data2", "data3")
+                .append("data1", "data1")
+                .append("data2", asList("a", "b", "c"))
                 .fieldInfo("field1", "ok")
                 .fieldWarn("field2", "warn")
-                .fieldError("field3", fieldRequired())
+                .fieldRequired("field3")
+                .fieldMaxLength("field4", 5)
                 .build();
         // then
         assertEquals("code", notification.getCode());
         assertEquals("20180114010134", notification.getId());
         assertEquals("warnMessage", notification.getMessage());
 
-        assertEquals(notification.getDataList().size(), 3);
-        assertTrue(notification.getDataList().containsAll(asList("data1", "data2", "data3")));
+        assertEquals(notification.getDataMap().size(), 2);
+        assertEquals(notification.getDataMap().get("data1"), "data1");
+        assertEquals(notification.getDataMap().get("data2"), asList("a", "b", "c"));
 
-        assertEquals(notification.getFieldMap().size(), 3);
+        assertEquals(notification.getFieldMap().size(), 4);
         assertTrue(notification.getFieldMap().containsKey("field1"));
         assertEquals("ok", notification.getFieldMap().get("field1").getMessage());
         assertTrue(notification.getFieldMap().containsKey("field2"));
         assertEquals("warn", notification.getFieldMap().get("field2").getMessage());
         assertTrue(notification.getFieldMap().containsKey("field3"));
         assertEquals("Pole wymagane", notification.getFieldMap().get("field3").getMessage());
+        assertEquals("Maks. ilość znaków wynosi 5", notification.getFieldMap().get("field4").getMessage());
     }
 
 }

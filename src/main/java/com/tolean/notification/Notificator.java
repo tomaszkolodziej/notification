@@ -2,6 +2,8 @@ package com.tolean.notification;
 
 import java.util.Collection;
 
+import static java.util.Arrays.asList;
+
 public class Notificator {
 
     private Notification notification;
@@ -33,13 +35,17 @@ public class Notificator {
         return this;
     }
 
-    public Notificator append(Collection<Object> objectCollection) {
-        notification.append(objectCollection);
+    public Notificator append(String key, Object... objects) {
+        if (objects != null && objects.length > 1) {
+            notification.append(key, asList(objects));
+        } else {
+            notification.append(key, objects[0]);
+        }
         return this;
     }
 
-    public Notificator append(Object... dataList) {
-        notification.append(dataList);
+    public Notificator append(String key, Collection<Object> objectCollection) {
+        notification.append(key, objectCollection);
         return this;
     }
 
@@ -53,17 +59,17 @@ public class Notificator {
         return this;
     }
 
+    public Notificator fieldRequired(String name) {
+        return fieldError(name, "Pole wymagane");
+    }
+
+    public Notificator fieldMaxLength(String name, int maxLength) {
+        return fieldError(name, "Maks. ilość znaków wynosi " + maxLength);
+    }
+
     public Notificator fieldError(String name, String message) {
         notification.field(name, message, Notification.Type.ERROR);
         return this;
-    }
-
-    public static String fieldRequired() {
-        return "Pole wymagane";
-    }
-
-    public static String fieldMaxLength(int maxLength) {
-        return "Maks. długość wynosi " + maxLength;
     }
 
     public Notification build() {

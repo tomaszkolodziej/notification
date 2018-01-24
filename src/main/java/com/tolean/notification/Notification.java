@@ -1,9 +1,9 @@
 package com.tolean.notification;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 public final class Notification {
@@ -12,7 +12,7 @@ public final class Notification {
     private String code;
     private String message;
     private String type;
-    private List<Object> dataList = new ArrayList();
+    private Map<String, Object> dataMap = new HashMap<>();
     private Map<String, FieldNotification> fieldMap = new HashMap<>();
 
     public Notification info(String id, String message) {
@@ -27,24 +27,16 @@ public final class Notification {
         return notification(id, message, Type.ERROR);
     }
 
-    public Notification append(Object... dataList) {
-        append(asList(dataList));
-
-        return this;
-    }
-
-    public Notification append(Collection<Object> dataCollection) {
-        for (Object data : dataCollection) {
-            dataList.add(data);
+    public Notification append(String key, Object data) {
+        if (dataMap.containsKey(key)) {
+            throw new IllegalArgumentException("Klucz " + key + " został już dodany.");
         }
 
-        return this;
-    }
+        if (data == null) {
+            throw new IllegalArgumentException("Nie można przekazać argumentu null.");
+        }
 
-    public Notification append(Object data) {
-        assert data != null;
-
-        dataList.add(data);
+        dataMap.put(key, data);
 
         return this;
     }
@@ -101,8 +93,8 @@ public final class Notification {
         return type;
     }
 
-    public List<Object> getDataList() {
-        return unmodifiableList(dataList);
+    public Map<String, Object> getDataMap() {
+        return unmodifiableMap(dataMap);
     }
 
     public Map<String, FieldNotification> getFieldMap() {

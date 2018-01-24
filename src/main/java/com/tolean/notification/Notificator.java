@@ -72,6 +72,10 @@ public class Notificator {
         return this;
     }
 
+    public boolean hasFields() {
+        return !notification.getFieldMap().isEmpty();
+    }
+
     public Notification build() {
         return notification;
     }

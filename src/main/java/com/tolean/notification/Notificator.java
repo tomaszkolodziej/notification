@@ -43,11 +43,6 @@ public class Notificator {
         return this;
     }
 
-    public Notificator append(Object data) {
-        notification.append(data);
-        return this;
-    }
-
     public Notificator fieldInfo(String name, String message) {
         notification.field(name, message, Notification.Type.INFO);
         return this;

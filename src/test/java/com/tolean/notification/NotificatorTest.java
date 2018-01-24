@@ -3,7 +3,6 @@ package com.tolean.notification;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static com.tolean.notification.Notificator.fieldMaxLength;
 import static com.tolean.notification.Notificator.fieldRequired;
